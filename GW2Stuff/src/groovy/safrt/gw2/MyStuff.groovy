@@ -3,10 +3,12 @@ package groovy.safrt.gw2
 import groovy.safrt.gw2.entities.authenticated.Account
 import groovy.safrt.gw2.json.AuthenticatedJSON;
 import groovy.safrt.gw2.entities.authenticated.Character as myCharacter
+import groovy.safrt.gw2.entities.local.LoadedItem
+import groovy.safrt.gw2.entities.local.LocalEquipment
 
 class MyStuff {
 	Map allToons = [:]
-	List<Character> listToons = []
+	List<myCharacter> listToons =[]
 
 	static main(String[] args) {
 		MyStuff myStuff = new MyStuff(args)
@@ -18,7 +20,10 @@ class MyStuff {
 		//		loadTokens(fileName)
 		new File(fileName).eachLine {line -> tokens.add(line)}
 		this.getListOfAccounts(tokens)
-		getEquipment()
+		getUpcomingBirthdays()
+		getRecentBirthdays()
+//		getEquipment()
+
 	}
 
 
@@ -43,8 +48,8 @@ class MyStuff {
 		//		 println accounts
 		//		 accounts = accounts.sort()
 		//		 println accounts
-//		accounts.each {accountx ->  accountx.getCharacters().each {charx -> allToons.put(charx.name, charx)}}
-		accounts.each {accountx ->  accountx.loadCharacters().each {myCharacter charx -> listToons.add(charx)}}
+//		accounts.each {accountx ->  accountx.myCharacters.each {charx -> listToons.put(charx.name, charx)}}
+		accounts.each {accountx ->  accountx.myCharacters.each {charx -> listToons.add(charx)}}
 		listToons = listToons.sort()
 //		allToons.each {name, charx ->
 //			println "$name:"+charx.yearsOld() + " " + charx.daysToNextBirthday()
@@ -80,13 +85,44 @@ class MyStuff {
 
 	def getBags(){
 		List Bags =[]
-		listToons.each{myCharacter toon -> Bags.add(toon.koadBags())}
+		listToons.each{myCharacter toon -> Bags.add(toon.loadBags())}
 		
 	}
 	
 	def getEquipment(){
-		List Equipment=[]
-		listToons.each{myCharacter toon -> Equipment.add(toon.getEquipment())}
-	}
+		List<LocalEquipment> equipment=[]
 	
+//		listToons.each{myCharacter toon -> Equipment.add(toon.equipmentList)}
+		listToons.each{myCharacter toon -> toon.equipmentList.each {LocalEquipment eq -> equipment.add(eq)}}
+		listToons.each{toon -> toon.bagList.each {bag ->bag.equipmentItems.each{LocalEquipment beq -> equipment.add(beq)}}}
+		equipment = equipment.sort{it.id}
+		sortEquipment(equipment)
+	}
+
+	def sortEquipment(List<LocalEquipment> equipment){
+		//total up the counts
+		//eventually add all the bank items
+		HashMap<String, LoadedItem> items =[:]
+		String itemId = "0"
+		equipment.each{thing ->
+			if(!thing.id.equals(itemId)){
+				itemId = thing.id
+				LoadedItem item = new LoadedItem(itemId)
+				item.itemList.add(thing)
+				items.put(itemId.toString(),item)				
+			} else {
+				items.get(itemId).itemList.add(thing)
+			}
+			
+		}
+//		items.each{k,item -> println item.getItemCount() + " " + item.itemInfo.name + ${item.itemList.each{toonInfo -> " " + toonInfo.charId}}}
+		items.each{k, item ->
+			print item.getItemCount() + " " + item.itemInfo.name +" " + item.itemId + " : "
+			item.itemList.each { toonInfo -> print " " + toonInfo.charId+ "(" + toonInfo.count+ ")"}
+			print "\n"
+			}
+			
+			
+		}
+
 }

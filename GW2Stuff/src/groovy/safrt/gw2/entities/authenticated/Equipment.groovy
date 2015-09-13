@@ -4,8 +4,12 @@ import groovy.safrt.gw2.json.AnonJson
 
 class Equipment {
 	String id, slot, skin
-	String[] upgrades, infusions
+	String[] upgrades=[], infusions=[]
 
+	Equipment(){
+		
+	}
+	
 	Equipment(equipment){
 
 		for(String prop in equipment){

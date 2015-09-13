@@ -29,19 +29,21 @@ public class AuthenticatedJSON {
 		List accountList=[]
 		tokens.each {token ->
 			def account = new JsonSlurper().parse(new URL(jsonStart + "account?access_token="+ token))
-			accountList.add(new Account(id:account.id, name:account.name, world:account.world,guilds:account.guilds, token:token))
+			Account temp = new Account(account.id, account.name, account.world,account.guilds, token);
+			accountList.add(temp);
+//			accountList.add(new Account(id:account.id, name:account.name, world:account.world,guilds:account.guilds, token:token))
 			//			println account.name
 		}
 		accountList
 	}
 
-	static List<myCharacter> getCharacters(Account account){
-		def jsonString = jsonStart + "characters?access_token=" + account.token
-		List characters = new JsonSlurper().parse(new URL(jsonStart + "characters?access_token="+account.token))
-		//			println characters
-		characters.each{charx -> account.loadCharacters.add(getCharacter(charx,account.token, account.name))}
-		account.loadCharacters
-	}
+//	static List<myCharacter> getCharacters(Account account){
+//		def jsonString = jsonStart + "characters?access_token=" + account.token
+//		List characters = new JsonSlurper().parse(new URL(jsonStart + "characters?access_token="+account.token))
+//		//			println characters
+//		characters.each{charx -> account.loadCharacters.add(getCharacter(charx,account.token, account.name))}
+//		account.loadCharacters
+//	}
 
 	static List<myCharacter> getCharacters(String accountToken){
 		def jsonString = jsonStart + "characters?access_token=" + accountToken
@@ -78,7 +80,7 @@ public class AuthenticatedJSON {
 		def fullEq = new JsonSlurper().parse(new URL(jsonStart+"characters/" + java.net.URLEncoder.encode(charx,"US-ASCII")
 				.replace("+","%20")+"/equipment?access_token="+accountToken))
 		//new myCharacter(fullChar, accountToken)
-		println fullEq
+//		println fullEq
 		fullEq
 	}
 

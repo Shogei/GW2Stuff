@@ -15,7 +15,7 @@ import groovy.transform.Sortable
 
 @Sortable(includes = ['name', 'age'])
 class Character {
-	String accountToken, name, race, profession, gender,  level, guild, created, age, deaths, crafting
+	String accountToken, name, race, profession, gender,  level, guild, created, age, deaths, crafting, accountName
 	List<LocalEquipment> equipmentList = []
 	List<LocalBag> bagList=[]
 	
@@ -35,9 +35,10 @@ class Character {
 		level = fullChar.level
 		guild = fullChar.guild
 		this.accountToken = accountToken
+		
 		loadEquipment(equipmentArray)
 
-		koadBags(bagArray)
+		loadBags(bagArray)
 	}
 	
 
@@ -48,19 +49,30 @@ class Character {
 		
 		for(piece in equipmentArray){
 
-			LocalEquipment eq = new LocalEquipment(piece.collect())
-			eq.charId = name;
-			
+//			println piece
+//			println piece.collect()
+			LocalEquipment eq = new LocalEquipment(piece)
+//			LocalEquipment eq = new LocalEquipment(piece.collect())
+			eq.charId = name
+			eq.accountName=accountName
 			equipmentList.add(eq)
 
 		}
 	}
 	
+	def setAccountName(String accountName){
+		accountName = accountName
+		equipmentList.each {eq -> eq.accountName = accountName}
+		bagList.each {bag -> bag.equipmentItems.each {it.accountName = accountName}}
+	}
 	
-	def koadBags(bagArray){
+	
+	def loadBags(bagArray){
 		for(bag in bagArray){
 
-			Bag bg = new Bag(bag.collect())
+//			Bag bg = new Bag(bag.collect())
+			Bag bg = new Bag(bag)
+			bg.each{bagz -> bagz.equipmentItems.each {item -> item.accountName=accountName;item.charId = name}}
 			bagList.add(bg)
 		}
 	}

@@ -1,5 +1,6 @@
 package groovy.safrt.gw2.entities.authenticated
 
+import groovy.safrt.gw2.entities.local.LocalEquipment
 import groovy.safrt.gw2.entities.local.LocalItem
 import groovy.safrt.gw2.json.AnonJson
 
@@ -11,6 +12,7 @@ class Bag {
 	Integer size
 	String[] inventory
 	List<BagInventory> inventoryItems =[]
+	List<LocalEquipment> equipmentItems = []
 
 
 	//	static parseEquipment(bags){
@@ -69,6 +71,7 @@ class Bag {
 		for(String item in inventory){
 			if (!item.contains("null")){
 				assignInventory(item)
+				assignEquipment(item)
 			}
 			
 		}}
@@ -77,14 +80,14 @@ class Bag {
 //		println itemString
 		//		Collection itemAttribs = itemString.collect()
 //		
-		println itemString
+//		println itemString
 		itemString = itemString.replace("count=","\"count\": ")
 		itemString = itemString.replace("id=","\"id\": ")
 		itemString = itemString.replace("skin=","\"skin\": ")
 		itemString = itemString.replace("upgrades=","\"upgrades\": ")
 		itemString = itemString.replace("infusions=","\"infusions\": ")
 		itemString = "{" + itemString + "}"
-		println itemString
+//		println itemString
 		def bagItem = new AnonJson().parseBagItem(itemString)
 		
 		//'''{"count": 1, "id": 27325, "upgrades": [24578, 24639]}'''
@@ -94,4 +97,27 @@ class Bag {
 		inventoryItems.add(item)
 	}
 
+	def assignEquipment(String itemString){
+		//		println itemString
+				//		Collection itemAttribs = itemString.collect()
+		//
+		//		println itemString
+				itemString = itemString.replace("count=","\"count\": ")
+				itemString = itemString.replace("id=","\"id\": ")
+				itemString = itemString.replace("skin=","\"skin\": ")
+				itemString = itemString.replace("upgrades=","\"upgrades\": ")
+				itemString = itemString.replace("infusions=","\"infusions\": ")
+				itemString = "{" + itemString + "}"
+		//		println itemString
+				def bagItem = new AnonJson().parseBagItem(itemString)
+				
+				//'''{"count": 1, "id": 27325, "upgrades": [24578, 24639]}'''
+				LocalEquipment equip = new LocalEquipment(bagItem.count, bagItem.id
+					)
+//		BagInventory item = new BagInventory(bagItem)
+//		String[] itemArray = itemString.split(", ")
+//		BagInventory item = new BagInventory(itemArray);
+		equipmentItems.add(equip)
+	}
+	
 }

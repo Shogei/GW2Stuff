@@ -7,7 +7,7 @@ import groovy.safrt.gw2.entities.authenticated.Equipment
 
 class AnonJson {
 //https://api.guildwars2.com/v2/quaggans
-	
+	private static jsonStart="https://api.guildwars2.com/v2/"
 	
 	
 
@@ -27,12 +27,20 @@ class AnonJson {
 		println("url: " + b.url)
 		}
 		
+		
+		def getItemInfo(String itemId){
+			//https://api.guildwars2.com/v2/items/28445
+			def jsonString = jsonStart + "items/" + itemId
+			def itemInfo = new JsonSlurper().parse(new URL(jsonString))
+			itemInfo
+			
+		}
 	
 		def parseEquipment(String eqString){
-			println eqString = eqString.replace('=',':')
+//			println eqString = eqString.replace('=',':')
 			def equipment = new JsonSlurper().parseText(eqString)
 			
-			println equipment
+//			println equipment
 		}
 		
 		def parseEquipmentArray(String[] equipmentArray){
@@ -44,11 +52,11 @@ class AnonJson {
 		}
 		
 		def parseEquipment(equipmentObject){
-			println equipmentObject
+//			println equipmentObject
 			def equipment = new JsonSlurper(type: JsonParserType.INDEX_OVERLAY).parseText(equipmentObject)
 			
 			
-			println equipment
+//			println equipment
 		}
 		
 		def parseBagItem(String test){
@@ -56,7 +64,7 @@ class AnonJson {
 //			test = test.replace("=",": ")
 //			def json = JsonOutput.toJson(test)
 			def stuff = new JsonSlurper().parseText(test)
-			println stuff
+//			println stuff
 			stuff
 
 		}
